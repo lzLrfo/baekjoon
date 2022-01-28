@@ -6,60 +6,63 @@ import java.util.StringTokenizer;
 public class Main {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int T = Integer.parseInt(br.readLine());
         StringBuilder sb = new StringBuilder();
-        int t = Integer.parseInt(br.readLine());
-        for(int i = 0; i < t; i++) {
+        for(int i = 0; i < T; i++) {
             String ins = br.readLine();
             int n = Integer.parseInt(br.readLine());
+            int[] x = new int[n];
             StringTokenizer st = new StringTokenizer(br.readLine(), "[,]");
-            int[] nums = new int[n];
             for(int j = 0; j < n; j++)
-                nums[j] = Integer.parseInt(st.nextToken());
-            sb.append(getAC(ins, n, nums)).append("\n");
+                x[j] = Integer.parseInt(st.nextToken());
+            sb.append(doRD(ins, n, x)).append("\n");
         }
         System.out.println(sb);
     }
-    private static StringBuilder getAC(String s, int n, int[] arr) {
-        StringBuilder sb = new StringBuilder();
-        int f = 0, l = n - 1;
+    private static String doRD(String s, int a, int[] arr) {
+        String answer = "";
+        int head = 0, tail = a - 1;
         int tmp = 0;
+        boolean reverse = false;
         for(int i = 0; i < s.length(); i++) {
-            if(s.charAt(i) == 'D') {
-                if(--n < 0)
-                    return sb.append("error");
-                if(f > l)
-                    f--;
-                else if(f < l)
-                    f++;
+            if(s.charAt(i) == 'R') {
+                tmp = head;
+                head = tail;
+                tail = tmp;
+                reverse = !reverse;
             }
-            else if(s.charAt(i) == 'R') {
-                tmp = f;
-                f = l;
-                l = tmp;
-            }
-        }
-        if(n <= 0)
-            return sb.append("[]");
-        if(f > l) {
-            for(int i = f; i >= l; i--) {
-                if(i == f)
-                    sb.append("[").append(arr[i]).append(",");
-                else if(i == l)
-                    sb.append(arr[i]).append("]");
+            else {
+                a--;
+                if(a < 0)
+                    return "error";
+                if(reverse)
+                    head--;
                 else
-                    sb.append(arr[i]).append(",");
+                    head++;
             }
         }
-        else if(f < l) {
-            for(int i = f; i <= l; i++) {
-                if(i == f)
-                    sb.append("[").append(arr[i]).append(",");
-                else if(i == l)
-                    sb.append(arr[i]).append("]");
+        if(a == 0)
+            return "[]";
+        if(reverse) {
+            for(int i = head; i >= tail; i--) {
+                if(i == head)
+                    answer += "[" + Integer.toString(arr[i]) + ",";
+                else if(i == tail)
+                    answer += Integer.toString(arr[i]) + "]";
                 else
-                    sb.append(arr[i]).append(",");
+                    answer += Integer.toString(arr[i]) + ",";
             }
         }
-        return sb;
+        else {
+            for(int i = head; i <= tail; i++) {
+                if(i == head)
+                    answer += "[" + Integer.toString(arr[i]) + ",";
+                else if(i == tail)
+                    answer += Integer.toString(arr[i]) + "]";
+                else
+                    answer += Integer.toString(arr[i]) + ",";
+            }
+        }
+        return answer;
     }
 }
